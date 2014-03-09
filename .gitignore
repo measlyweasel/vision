@@ -1,0 +1,5 @@
+pcv_data.zip
+*.jpg
+data/
+*.iml
+.idea/
