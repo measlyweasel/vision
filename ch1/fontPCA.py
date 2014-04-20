@@ -44,13 +44,11 @@ for i in range(7):
 show()
 
 # save this data to a pickle
-f = open ('font_pca_modes.pkl', 'wb')
-pickle.dump(imageMean,f)
-pickle.dump(V,f)
-f.close()
+with open ('font_pca_modes.pkl', 'wb') as f:
+    pickle.dump(imageMean,f)
+    pickle.dump(V,f)
 
 #load from the pickle
-# f = open('font_pca_modes.pkl', 'rb')
-# imageMean = pickle.load(f)
-# V = pickle.load(f)
-# f.close()
+# with open('font_pca_modes.pkl', 'rb') as f:
+#   imageMean = pickle.load(f)
+#   V = pickle.load(f)
