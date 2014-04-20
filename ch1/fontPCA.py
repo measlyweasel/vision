@@ -4,8 +4,7 @@ import ch1.pca as pca
 from numpy import *
 from pylab import *
 from zipfile import ZipFile
-import stat
-
+import pickle
 
 fontsZip = ZipFile('data/fontimages.zip','r')
 
@@ -20,8 +19,6 @@ def imageFromInsideZip(fileName):
     data = fontsZip.open(fileName).read()
     fileLikeData = BytesIO(data)
     return Image.open(fileLikeData)
-
-
 
 im = array(imageFromInsideZip(allImageNames[0])) # open the first image to get the size
 
@@ -45,3 +42,15 @@ for i in range(7):
     imshow(V[i].reshape(width,height))
 
 show()
+
+# save this data to a pickle
+f = open ('font_pca_modes.pkl', 'wb')
+pickle.dump(imageMean,f)
+pickle.dump(V,f)
+f.close()
+
+#load from the pickle
+# f = open('font_pca_modes.pkl', 'rb')
+# imageMean = pickle.load(f)
+# V = pickle.load(f)
+# f.close()

@@ -3,3 +3,4 @@ pcv_data.zip
 data/
 *.iml
 .idea/
+*.pkl
