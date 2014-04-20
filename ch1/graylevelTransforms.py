@@ -1,5 +1,6 @@
 from PIL import Image
 from pylab import *
+from numpy import *
 
 #original image
 image = array(Image.open('data/empire.jpg').convert('L'))
