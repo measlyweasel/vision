@@ -49,7 +49,6 @@ images.append(filters.gaussian_filter(im,15))
 figure()
 gray()
 for i in range(len(images)):
-    print(i)
     subplot(1,5,i+1)
     imshow(images[i])
 show()
