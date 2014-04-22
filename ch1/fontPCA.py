@@ -6,7 +6,7 @@ from pylab import *
 from zipfile import ZipFile
 import pickle
 
-fontsZip = ZipFile('data/fontimages.zip','r')
+fontsZip = ZipFile('../data/fontimages.zip','r')
 
 # reverse engineered the zipfile's external attributes to get this bitwise operation
 # the first 2 bytes in external_attr are unix file stat and the next 2 are windows

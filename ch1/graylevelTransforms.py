@@ -3,7 +3,7 @@ from pylab import *
 from numpy import *
 
 #original image
-image = array(Image.open('data/empire.jpg').convert('L'))
+image = array(Image.open('../data/empire.jpg').convert('L'))
 gray()
 
 #invert image

@@ -3,10 +3,10 @@ from numpy import *
 from scipy.ndimage import filters
 from pylab import *
 
-# Dx and Dy are discrete approximation matrix convolutions of the original image data points with the respective kernels
+# Dx and Dy are discrete approximation matrix convolutions of the original image data points with the following kernels
 
 # I'x = I * Dx // image partial derivative in the x direction
-#I'y = I * Dy // partial derivative in the y direction
+# I'y = I * Dy // partial derivative in the y direction
 
 #Sobel derivative filter
 #
@@ -22,7 +22,7 @@ from pylab import *
 
 
 #sobel example
-im = array(Image.open('data/empire.jpg').convert('L'))
+im = array(Image.open('../data/empire.jpg').convert('L'))
 imx = zeros(im.shape)
 imy = zeros(im.shape)
 

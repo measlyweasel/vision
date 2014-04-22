@@ -20,7 +20,7 @@ imshow(im2)
 show()
 
 #blurring a color image
-im = array(Image.open('data/empire.jpg'))
+im = array(Image.open('../data/empire.jpg'))
 im2 = zeros(im.shape)
 for i in range(3):
     #blur each color channel individually
