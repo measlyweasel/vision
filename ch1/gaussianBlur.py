@@ -5,7 +5,7 @@ from pylab import *
 
 
 #blurring a gray scale
-im = array(Image.open('data/empire.jpg').convert('L'))
+im = array(Image.open('../data/empire.jpg').convert('L'))
 sigma = 5
 im2 = filters.gaussian_filter(im,sigma)
 
@@ -37,7 +37,7 @@ show()
 
 
 #blurring the same image with several different values of sigma
-im = array(Image.open('data/empire.jpg').convert('L'))
+im = array(Image.open('../data/empire.jpg').convert('L'))
 images = [im]
 
 images.append(filters.gaussian_filter(im,2))
