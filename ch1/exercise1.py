@@ -21,3 +21,12 @@ for i in range(len(images)):
     subplot(2,5,i+6)
     hist(images[i].flatten(),128)
 show()
+
+for i in range(len(images)):
+    subplot(2,5,i+1)
+    imshow(images[i])
+    subplot(2,5,i+6)
+    contour(images[i], origin='image')
+show()
+
+
