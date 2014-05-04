@@ -3,51 +3,32 @@ from PIL import Image
 from scipy.ndimage import filters
 from numpy import *
 from pylab import *
+from scipy import misc
 
-imColor = array(Image.open('../data/Univ2.jpg'))
-imGray = array(Image.open('../data/Univ2.jpg').convert('L'))
+imColor = misc.face()#array(Image.open('../data/empire.jpg'))
+imGray = misc.lena() #array(Image.open('../data/empire.jpg').convert('L'))
 
-sigma = 2
+sigma = 3
+scale=0.25
 
-blurColor = zeros(imColor.shape)
-for i in range(3):
-    blurColor[:, :, i] = filters.gaussian_filter(imColor[:, :, i], sigma)
-blurColor = uint8(blurColor)
-
-blurGray = filters.gaussian_filter(imGray, sigma)
-
-maskColor = imColor - blurColor
-maskGray = imGray - blurGray
-
-
-def sharpen(image, mask):
+def sharpen(image):
     out = zeros(image.shape)
-    for channel in range(len(image[0][0])):
-        for y in range(len(image)):
-            for x in range(len(image[0])):
-                out[y][x][channel] = image[y][x][channel] + mask[y][x][channel]
-                # print(uint8(out[y][x][channel]))
+    if (isinstance(image[0][0],list)) :
+        for i in range(3):
+            out[:,:,i] = image[:,:,i]-scale*filters.gaussian_filter(imColor[:, :, i], sigma)
+    else:
+        out = image-scale*filters.gaussian_filter(image,sigma)
+
     return uint8(out)
 
-def sharpenGray(image,mask):
-    out = zeros(image.shape)
-    for y in range(len(image)):
-        for x in range(len(image[0])):
-            out[y][x]= image[y][x]+ mask[y][x]
-    return uint8(out)
+images = [imColor, sharpen(imColor),
+          imGray, sharpen(imGray)]
 
-
-sharpenedColor = sharpen(imColor, maskColor)
-sharpenedGray = sharpenGray(imGray, maskGray)
-
-figure()
-images = [imColor, blurColor, maskColor, sharpenedColor,
-          imGray, blurGray, maskGray, sharpenedGray]
+gray()
 
 for i in range(len(images)):
     subplot(2, len(images) / 2, i + 1)
     axis('off')
-    gray()
     imshow(images[i])
 
 show()
