@@ -33,7 +33,6 @@ imshow(im)
 
 subplot(1,2,2)
 imshow(im2)
-show()
 
 
 #blurring the same image with several different values of sigma
