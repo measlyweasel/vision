@@ -4,10 +4,10 @@ from scipy.ndimage import filters
 from numpy import *
 from pylab import *
 
-imColor = array(Image.open('../data/empire.jpg'))
-imGray = array(Image.open('../data/empire.jpg').convert('L'))
+imColor = array(Image.open('../data/Univ2.jpg'))
+imGray = array(Image.open('../data/Univ2.jpg').convert('L'))
 
-sigma = 5
+sigma = 2
 
 blurColor = zeros(imColor.shape)
 for i in range(3):
@@ -22,24 +22,27 @@ maskGray = imGray - blurGray
 
 def sharpen(image, mask):
     out = zeros(image.shape)
-    threshold = 0.1
     for channel in range(len(image[0][0])):
         for y in range(len(image)):
             for x in range(len(image[0])):
-                ratio = mask[y][x][channel]  # / image[x][y][channel]
-                print(x, y, ratio)
-                # if ratio > threshold:
-                # out[x][y][channel] = mask[x][y][channel] + image[x][y][channel]
-                #         else:
-                #             out[x][y][channel] = image[x][y][channel]
-    return out
+                out[y][x][channel] = image[y][x][channel] + mask[y][x][channel]
+                # print(uint8(out[y][x][channel]))
+    return uint8(out)
+
+def sharpenGray(image,mask):
+    out = zeros(image.shape)
+    for y in range(len(image)):
+        for x in range(len(image[0])):
+            out[y][x]= image[y][x]+ mask[y][x]
+    return uint8(out)
 
 
 sharpenedColor = sharpen(imColor, maskColor)
+sharpenedGray = sharpenGray(imGray, maskGray)
 
 figure()
-images = [imColor, blurColor, maskColor,
-          imGray, blurGray, maskGray]
+images = [imColor, blurColor, maskColor, sharpenedColor,
+          imGray, blurGray, maskGray, sharpenedGray]
 
 for i in range(len(images)):
     subplot(2, len(images) / 2, i + 1)
