@@ -3,7 +3,7 @@ from scipy.ndimage import filters
 from numpy import *
 from pylab import *
 from scipy import misc
-
+import itertools
 
 def gradient(image):
     imx = zeros(image.shape)
@@ -20,40 +20,52 @@ im = misc.ascent()
 
 (magnitude, angles) = gradient(im)
 
+averageMag = average(magnitude)
+
 figure()
 gray()
 imshow(im)
-
-# for y in range(len(im)):
-# for x in range(len(im[y])):
-# if not visited[y][x] and abs(magnitude[y][x] - averageMag) > threshold:
-# # follow the line, should be perpindicular to gradient angle
-# angle = angles[y][x]
-# nextPixelsAlongLine = radiansToRelativePixels(angle)
-# print(angle, nextPixelsAlongLine)
-#             plot(x, y, 'r*')
-#         visited[y][x] = 1
-
+show()
 
 sameAngle = vectorize(lambda angle, lowerBound, upperBound: 255 if angle >= lowerBound and angle <= upperBound else 0)
 
 bins = [-pi, -pi * 3 / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, pi * 3 / 4, pi]
 
-binnedAngles = digitize(angles.flatten(), bins)
+maskedAngles = (magnitude>averageMag)*angles
 
+binnedAngles = digitize(maskedAngles.flatten(), bins)
 
 def isSimilar(a, bin):
-    binMinusOne = bin - 1 if bin - 1 else len(bins) - 1
-    binPlusOne = bin + 1 if bin+1<len(bins) else 1
-    return a == bin or a == binMinusOne or a == binPlusOne
+    # binMinusOne = bin - 1 if bin - 1 else len(bins) - 1
+    # binPlusOne = bin + 1 if bin+1<len(bins) else 1
+    # return a == bin or a == binMinusOne or a == binPlusOne
+    return a == bin
 
 
 isSimilarVectorized = vectorize(isSimilar)
 
-for bin in range(1, len(bins)):  #one based indexing of bins
-    print(bin)
+#only need to go through half the bins since each straight line will have gradients
+#pointing opposing directions at the line. Really only need to check half of the compass
+#points because of this
+for bin in range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
+    print("bin ", bin)
     similarAngledPoints = isSimilarVectorized(binnedAngles.reshape(im.shape), bin=bin)
-    print(similarAngledPoints)
 
-    # for angle in unique(angles):
-    #show()
+    subplot(2,4,bin)
+    imshow(similarAngledPoints)
+
+    #now to find the connected components
+
+    # compassDirections = list(itertools.product([1,0,-1],repeat=2))
+    #
+    # visited = zeros(similarAngledPoints.shape,dtype=bool)
+    # for (y,x),value in ndenumerate(similarAngledPoints):
+    #     if not visited[y][x]:
+    #         visited[y][x] = True
+    #         print(x,y)
+            # for direction in compassDirections:
+
+show()
+
+
+
