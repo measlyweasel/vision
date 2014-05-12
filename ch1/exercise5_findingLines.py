@@ -56,14 +56,38 @@ for bin in range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
 
     #now to find the connected components
 
-    # compassDirections = list(itertools.product([1,0,-1],repeat=2))
-    #
-    # visited = zeros(similarAngledPoints.shape,dtype=bool)
-    # for (y,x),value in ndenumerate(similarAngledPoints):
-    #     if not visited[y][x]:
-    #         visited[y][x] = True
-    #         print(x,y)
-            # for direction in compassDirections:
+    compassDirections = list(itertools.product([1,0,-1],repeat=2))
+
+    visited = zeros(similarAngledPoints.shape,dtype=bool)
+
+    #depth first search
+    def dfs(yPoint,xPoint):
+        if not similarAngledPoints[yPoint][xPoint]:
+            return []
+        connectedComponent = [(yPoint,xPoint)]
+        stack = []
+        stack.append((yPoint,xPoint))
+        while len(stack) > 0:
+            pixel = stack.pop()
+            y = pixel[0]
+            x = pixel[1]
+            if not visited[y][x]:
+                visited[y][x] = True
+                for direction in compassDirections:
+                    nextY = y+direction[0]
+                    nextX = x+direction[1]
+                    if similarAngledPoints[nextY][nextX]:
+                        connectedComponent.append((nextY,nextX))
+                        stack.push((nextY,nextX))
+        return connectedComponent
+
+
+    for (y,x),value in ndenumerate(similarAngledPoints):
+        if not visited[y][x]:
+            visited[y][x] = True
+            for direction in compassDirections:
+                [y+direction[0]][x+direction[1]]
+
 
 show()
 
