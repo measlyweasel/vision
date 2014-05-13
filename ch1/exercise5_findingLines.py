@@ -4,6 +4,7 @@ from numpy import *
 from pylab import *
 from scipy import misc
 import itertools
+import math
 
 def gradient(image):
     imx = zeros(image.shape)
@@ -23,9 +24,9 @@ im = misc.ascent()
 averageMag = average(magnitude)
 
 figure()
+axis('off')
 gray()
 imshow(im)
-show()
 
 sameAngle = vectorize(lambda angle, lowerBound, upperBound: 255 if angle >= lowerBound and angle <= upperBound else 0)
 
@@ -36,13 +37,30 @@ maskedAngles = (magnitude>averageMag)*angles
 binnedAngles = digitize(maskedAngles.flatten(), bins)
 
 def isSimilar(a, bin):
-    # binMinusOne = bin - 1 if bin - 1 else len(bins) - 1
-    # binPlusOne = bin + 1 if bin+1<len(bins) else 1
-    # return a == bin or a == binMinusOne or a == binPlusOne
     return a == bin
 
 
 isSimilarVectorized = vectorize(isSimilar)
+
+def distanceToOrigin(point):
+    x=point[1]
+    y=point[0]
+    return math.sqrt(y**2 + x**2)
+
+def minAndMaxPoint(pointList):
+    min = distanceToOrigin(im.shape)
+    minPoint = (0,0)
+    max = 0
+    maxPoint = (0,0)
+    for point in pointList:
+        distance = distanceToOrigin(point)
+        if distance > max:
+            max = distance
+            maxPoint = point
+        if distance < min:
+            min = distance
+            minPoint = point
+    return (minPoint,maxPoint)
 
 #only need to go through half the bins since each straight line will have gradients
 #pointing opposing directions at the line. Really only need to check half of the compass
@@ -50,12 +68,8 @@ isSimilarVectorized = vectorize(isSimilar)
 for bin in [1]:#range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
     print("bin ", bin)
     similarAngledPoints = isSimilarVectorized(binnedAngles.reshape(im.shape), bin=bin)
-
-    subplot(2,4,bin)
     imshow(similarAngledPoints)
-
     #now to find the connected components
-
     compassDirections = list(itertools.product([1,0,-1],repeat=2))
     compassDirections.remove((0,0))
 
@@ -87,12 +101,14 @@ for bin in [1]:#range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
                             stack.append((nextY,nextX))
         return connectedComponent
 
+    lengths = []
     for (y,x),value in ndenumerate(similarAngledPoints):
         connectedComponent = dfs(y,x)
-        if connectedComponent:
-            print(y,x,connectedComponent)
-
-
+        #picked a min length of 20 pixels as a cut off
+        if len(connectedComponent)>19:
+            (minPoint,maxPoint)=minAndMaxPoint(connectedComponent)
+            plot([minPoint[1],maxPoint[1]],[minPoint[0],maxPoint[0]])
+            print(minPoint,maxPoint,connectedComponent)
 show()
 
 
