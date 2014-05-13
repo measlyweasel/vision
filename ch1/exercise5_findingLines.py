@@ -42,18 +42,28 @@ def isSimilar(a, bin):
 
 isSimilarVectorized = vectorize(isSimilar)
 
-def distanceToOrigin(point):
-    x=point[1]
-    y=point[0]
+#distance measured from different corners/edges
+#depending on gradient angle (line direction)
+def distanceBetweenPoints(point,origin):
+    x=point[1] - origin[1]
+    y=point[0] - origin[0]
     return math.sqrt(y**2 + x**2)
 
-def minAndMaxPoint(pointList):
-    min = distanceToOrigin(im.shape)
+halfHeight=int(math.ceil(im.shape[0]/2))
+halfWidth=int(math.ceil(im.shape[1]/2))
+width=im.shape[1]
+height=im.shape[0]
+
+originPoints=[(0,halfWidth),(0,0),(halfHeight,0),(height,0),(0,halfWidth),(0,0),(halfHeight,0),(height,0)]
+
+def minAndMaxPoint(pointList,bin):
+    print("from origin ",originPoints[bin-1])
+    min = distanceBetweenPoints(im.shape,(0,0))
     minPoint = (0,0)
     max = 0
     maxPoint = (0,0)
     for point in pointList:
-        distance = distanceToOrigin(point)
+        distance = distanceBetweenPoints(point,originPoints[bin-1])
         if distance > max:
             max = distance
             maxPoint = point
@@ -65,10 +75,11 @@ def minAndMaxPoint(pointList):
 #only need to go through half the bins since each straight line will have gradients
 #pointing opposing directions at the line. Really only need to check half of the compass
 #points because of this
-for bin in [1]:#range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
+for bin in range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
     print("bin ", bin)
     similarAngledPoints = isSimilarVectorized(binnedAngles.reshape(im.shape), bin=bin)
-    imshow(similarAngledPoints)
+    #imshow(similarAngledPoints)
+
     #now to find the connected components
     compassDirections = list(itertools.product([1,0,-1],repeat=2))
     compassDirections.remove((0,0))
@@ -106,7 +117,7 @@ for bin in [1]:#range(1, int(ceil(len(bins)/2))):  #one based indexing of bins
         connectedComponent = dfs(y,x)
         #picked a min length of 20 pixels as a cut off
         if len(connectedComponent)>19:
-            (minPoint,maxPoint)=minAndMaxPoint(connectedComponent)
+            (minPoint,maxPoint)=minAndMaxPoint(connectedComponent,bin)
             plot([minPoint[1],maxPoint[1]],[minPoint[0],maxPoint[0]])
             print(minPoint,maxPoint,connectedComponent)
 show()
